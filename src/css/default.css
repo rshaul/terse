@@ -1,0 +1,91 @@
+﻿#loading {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	z-index: 9;
+	background: rgba(0, 0, 0, 0.6);
+}
+
+#loading span {
+	position: absolute;
+	display: block;
+	background: white;
+	width: 32px;
+	height: 32px;
+	top: 50%;
+	left: 50%;
+	margin: -16px 0 0 -16px;
+	border: 1px solid white;
+	border-radius: 5px;
+}
+
+#playing {
+	height: 100px;
+}
+
+#nav {
+	position: relative;
+	background: #000;
+	height: 30px;
+	line-height: 30px;
+}
+#categories li {
+	float: left;
+}
+#categories a {
+	padding: 0 20px;
+	display: block;
+	font-weight: bold;
+	color: #FFF;
+	text-decoration: none;
+}
+#categories a:hover {
+	background: #333;
+}
+#categories:after {
+	content: "";
+	display: block;
+	height: 0;
+	visibility: hidden;
+	clear: both;
+}
+
+#search {
+	position: absolute;
+	top: 0px;
+	right: 5px;
+}
+#search input {
+	width: 200px;
+}
+
+#playlist {
+	position: absolute;
+	background: #333;
+	width: 100%;
+	overflow: scroll;
+	top: 130px;
+	height: 90%;
+}
+
+.file {
+	position: relative;
+	display: block;
+	color: #FFF;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.path {
+	padding: 0 5px;
+}
+
+.duration {
+	position: absolute;
+	right: 0;
+	padding: 0 5px;
+}
+
+.file:hover {
+	background: #555;
+}
