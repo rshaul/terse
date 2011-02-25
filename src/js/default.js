@@ -32,19 +32,19 @@ function Startup() {
 }
 
 function RefreshPlaylist() {
-	$.getJSON("/ajax/files.aspx", function (files) {
-		$("#playlist").html(GetPlaylistHtml(files));
+	$.getJSON("/ajax/songs.aspx", function (songs) {
+		$("#playlist").html(GetPlaylistHtml(songs));
 	}).error(function (obj, status) {
 		alert("Could not get files: " + status);
 	});
 }
 
-function GetPlaylistHtml(files) {
+function GetPlaylistHtml(songs) {
 	var items = [];
-	for (var i = 0; i < files.length; i++) {
+	for (var i = 0; i < songs.length; i++) {
 		items.push('<a href="#" class="file"><span class="path">'
-			+ files[i].path + '</span><span class="duration">'
-			+ files[i].duration + '</span></div>');
+			+ songs[i].path + '</span><span class="duration">'
+			+ songs[i].duration + '</span></div>');
 	}
 	return items.join('\n');
 }

@@ -4,7 +4,7 @@
 
     void Application_Start(object sender, EventArgs e) 
     {
-		Terse.CollectionManager.Init();
+		Terse.LibraryManager.Init();
 	}
 
     

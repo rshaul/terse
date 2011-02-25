@@ -8,7 +8,7 @@ namespace Terse
 {
 	public class Artist : IComparable<Artist>
 	{
-		public Artist(File file) {
+		public Artist(Song file) {
 			Name = file.Artist;
 			Art = file.Art;
 		}
