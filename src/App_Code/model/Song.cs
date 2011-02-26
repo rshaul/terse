@@ -9,14 +9,17 @@ namespace Terse
 {
 	public class Song : IComparable<Song>
 	{
+		TagLib.File file;
 		public Song(TagLib.File file) {
-			Path = GetPath(file);
-			Artist = GetArtist(file);
-			Art = GetArt(file);
+			this.file = file;
+
+			MimeType = file.MimeType;
+			Path = file.Name;
+			Artist = GetArtist();
 			Duration = file.Properties.Duration;
 		}
 
-		public Art GetArt(TagLib.File file) {
+		public Art GetArt() {
 			TagLib.IPicture[] pics = file.Tag.Pictures;
 			if (pics != null && pics.Length > 0) {
 				Art art;
@@ -27,7 +30,7 @@ namespace Terse
 			return null;
 		}
 
-		static string GetArtist(TagLib.File file) {
+		string GetArtist() {
 			string artist = file.Tag.FirstAlbumArtist;
 			if (string.IsNullOrEmpty(artist)) {
 				artist = file.Tag.FirstPerformer;
@@ -38,20 +41,11 @@ namespace Terse
 			return artist;
 		}
 
-		static string GetPath(TagLib.File file) {
-			string output = file.Name;
-			foreach (string path in LibraryManager.CollectionPaths) {
-				if (output.StartsWith(path)) {
-					output.Remove(0, path.Length);
-					break;
-				}
-			}
-			return output;
-		}
-
+		public int Id { get { return GetHashCode(); } }
 		public string Artist { get; private set; }
 		public string Path { get; private set; }
-		public Art Art { get; private set; }
+		public string MimeType { get; private set; }
+		public Byte[] Data { get; private set; }
 		public TimeSpan Duration { get; private set; }
 
 		public string FormatDuration() {

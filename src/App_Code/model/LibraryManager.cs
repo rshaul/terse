@@ -5,6 +5,7 @@ using System.Web;
 using System.ComponentModel;
 using System.Configuration;
 using System.IO;
+using System.Threading;
 
 namespace Terse
 {
@@ -38,28 +39,21 @@ namespace Terse
 			}
 			return list;
 		}
-		
-		// Get all files in the directories and subdirectories
-		static List<FileInfo> GetFileInfos(IEnumerable<DirectoryInfo> directories) {
-			List<FileInfo> files = new List<FileInfo>();
-			foreach (DirectoryInfo dir in directories) {
-				files.AddRange(GetFileInfos(dir));
+
+		static void AddSongs(List<Song> songs, IEnumerable<DirectoryInfo> dirs) {
+			foreach (DirectoryInfo dir in dirs) {
+				AddSongs(songs, dir);
 			}
-			return files;
-		}
-		static List<FileInfo> GetFileInfos(DirectoryInfo dir) {
-			DirectoryInfo[] children = dir.GetDirectories();
-			List<FileInfo> files = new List<FileInfo>();
-			foreach (DirectoryInfo child in children) {
-				files.AddRange(GetFileInfos(child));
-			}
-			files.AddRange(dir.GetFiles());
-			return files;
 		}
 
 		// Get all valid songs
-		static List<Song> GetSongs(List<FileInfo> infos) {
-			List<Song> songs = new List<Song>(infos.Count);
+		static void AddSongs(List<Song> songs, DirectoryInfo dir) {
+			DirectoryInfo[] children = dir.GetDirectories();
+			foreach (DirectoryInfo child in children) {
+				AddSongs(songs, child);
+			}
+			
+			FileInfo[] infos = dir.GetFiles();
 			foreach (FileInfo info in infos) {
 				try {
 					TagLib.File file = TagLib.File.Create(info.FullName);
@@ -70,21 +64,33 @@ namespace Terse
 					// TODO: Let user know somewhere
 				}
 			}
-			return songs;
 		}
 
 
-		static Library BuildLibrary() {
+		static void BuildLibrary() {
 			List<DirectoryInfo> dirs = GetDirectoryInfos();
-			List<FileInfo> infos = GetFileInfos(dirs);
-			List<Song> songs = GetSongs(infos);
+			
+			List<Song> songs = new List<Song>();
+			AddSongs(songs, dirs);
 			songs.Sort();
-			return new Library(songs);
+			
+			CacheManager.Remove("library");
+			CacheManager.Add("library", new Library(songs));
 		}
 
+		static Thread libraryBuilder;
 		public static void Init() {
+			if (libraryBuilder == null) {
+				libraryBuilder = new Thread(new ThreadStart(BuildLibrary));
+				libraryBuilder.Start();
+			}
+		}
+
+		public static void Cleanup() {
 			CacheManager.Remove("library");
-			CacheManager.Add("library", BuildLibrary());
+			if (libraryBuilder.IsAlive) {
+				libraryBuilder.Abort();
+			}
 		}
 
 		public static bool TryGetLibrary(out Library library) {

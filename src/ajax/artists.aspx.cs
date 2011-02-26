@@ -9,19 +9,10 @@ using Terse.Json;
 
 public partial class ajax_artists : LibraryAjax
 {
-	JsonDictionary FileToJson(Song file) {
+	JsonDictionary ArtistToJson(Artist artist) {
 		JsonDictionary dict = new JsonDictionary();
-		dict.Add("artist", file.Artist);
+		dict.Add("artist", artist.Name);
 		return dict;
-	}
-
-	bool HasArtist(List<Song> files, string artist) {
-		foreach (Song file in files) {
-			if (file.Artist == artist) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	string Clean(string n) {
@@ -33,16 +24,24 @@ public partial class ajax_artists : LibraryAjax
 				o += c;
 			}
 		}
-		return o;
-	}
 
-	protected override string LibraryResponse(Library library) {
 		// TOMORROW PUT THE ALBUM ART GENERATING CODE SOMEWHERE
+		/*
 		foreach (Artist artist in library.GetArtists()) {
 			if (artist.Art != null) {
 				artist.Art.Save(Environment.CurrentDirectory + "\\images\\artists\\", Clean(artist.Name));
 			}
 		}
 		return null;
+		*/
+		return o;
+	}
+
+	protected override string LibraryResponse(Library library) {
+		JsonArray artists = new JsonArray();
+		foreach (Artist artist in library.GetArtists()) {
+			artists.Add(ArtistToJson(artist));
+		}
+		return artists.ToJson();
 	}
 }

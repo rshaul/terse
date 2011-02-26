@@ -8,8 +8,6 @@
     <asp:ContentPlaceHolder id="head" runat="server" />
 </head>
 <body>
-    <div>
-        <asp:ContentPlaceHolder id="body" runat="server" />
-    </div>
+	<asp:ContentPlaceHolder id="body" runat="server" />
 </body>
 </html>

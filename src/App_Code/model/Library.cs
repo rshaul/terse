@@ -15,35 +15,46 @@ namespace Terse
 
 	public class Library
 	{
-		IEnumerable<Song> files;
+		IEnumerable<Song> songs;
 
-		public Library(IEnumerable<Song> files) {
-			this.files = files;
+		public Library(IEnumerable<Song> songs) {
+			this.songs = songs;
 		}
 
-		void CheckArt(Artist a1, Artist a2) {
-			if (a1.Art == null && a2.Art != null) {
-				a1.Art = a2.Art;
+		void TryAddArtist(List<Artist> artists, Song song) {
+			foreach (Artist artist in artists) {
+				if (artist.Name == song.Artist) {
+					if (artist.Art == null) {
+						artist.Art = song.GetArt();
+					}
+				} else {
+					artists.Add(new Artist(song));
+				}
 			}
 		}
 
 		public IEnumerable<Artist> GetArtists() {
 			List<Artist> artists = new List<Artist>();
-			foreach (Song file in files) {
-				Artist artist = new Artist(file);
-				int pos = artists.IndexOf(artist);
-				if (pos >= 0) {
-					CheckArt(artists[pos], artist);
-				} else {
-					artists.Add(artist);
-				}
+			foreach (Song song in songs) {
+				TryAddArtist(artists, song);
 			}
 			artists.Sort();
 			return artists;
 		}
 
 		public IEnumerable<Song> GetSongs() {
-			return files;
+			return songs;
+		}
+
+		public bool TryGetSong(int id, out Song output) {
+			foreach (Song song in songs) {
+				if (song.Id == id) {
+					output = song;
+					return true;
+				}
+			}
+			output = null;
+			return false;
 		}
 	}
 }

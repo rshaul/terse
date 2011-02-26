@@ -8,19 +8,31 @@ using System.Text;
 using Terse;
 using Terse.Json;
 
-public partial class ajax_files : LibraryAjax
+public partial class ajax_songs : LibraryAjax
 {
-	public JsonDictionary FileToJson(Song file) {
+	string FormatPath(string input) {
+		foreach (string path in LibraryManager.CollectionPaths) {
+			string p = path.TrimEnd('\\') + '\\';
+			if (input.StartsWith(p)) {
+				input = input.Remove(0, p.Length);
+				break;
+			}
+		}
+		return input;
+	}
+
+	public JsonDictionary SongToJson(Song song) {
 		JsonDictionary dict = new JsonDictionary();
-		dict.Add("path", file.Path);
-		dict.Add("duration", file.FormatDuration());
+		dict.Add("path", FormatPath(song.Path));
+		dict.Add("duration", song.FormatDuration());
+		dict.Add("id", song.Id.ToString());
 		return dict;
 	}
 
 	protected override string LibraryResponse(Library library) {
 		JsonArray array = new JsonArray();
-		foreach (var file in library.GetSongs()) {
-			array.Add(FileToJson(file));
+		foreach (Song song in library.GetSongs()) {
+			array.Add(SongToJson(song));
 		}
 		return array.ToJson();
 	}

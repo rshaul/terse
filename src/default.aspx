@@ -4,27 +4,28 @@
 </asp:Content>
 <asp:Content ID="body" ContentPlaceHolderID="body" Runat="Server">
 
-	<div id="loading">
-		<span><img src="/images/loading.gif" /></span>
-	</div>
-
 	<div id="playing">
 		Next Previous Start Stop
+		<audio id="player" controls="controls"></audio>
 	</div>
 
 	<div id="nav">
 		<ul id="categories">
-			<li><a href="#artist">Artist</a></li>
-			<li><a href="#song">Song</a></li>
+			<li><a id="artists-link" href="#artists">Artist</a></li>
+			<li><a id="songs-link" href="#songs">Song</a></li>
 		</ul>
 
 		<div id="search">
 			<input type="text" id="query" />
 		</div>
 	</div>
+	
+	<div id="loading">
+		<span><img src="/images/loading.gif" /></span>
+	</div>
 
-	<div id="playlist"></div>
-	<div id="main"></div>
+	<div class="tab-main" id="artists-tab"></div>
+	<div class="tab-main" id="songs-tab"></div>
 
 	<script src="/js/default.js" type="text/javascript"></script>
 </asp:Content>

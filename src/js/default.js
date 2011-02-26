@@ -1,50 +1,92 @@
 ﻿$(function () {
-	CheckLoading();
+	ShowLoading();
+	WaitForLoading();
+	LoadTab("#artists-tab", "/ajax/artists.aspx", GetArtistsHtml);
+	LoadTab("#songs-tab", "/ajax/songs.aspx", GetSongsHtml);
+	HideLoading();
 
-	ResizePlaylist();
-	$(window).resize(ResizePlaylist);
+	ResizeMain();
+	$(window).resize(ResizeMain);
+	
+	ShowTab(window.location.hash);
+
+	$("#artists-link").click(ShowArtists);
+	$("#songs-link").click(ShowSongs);
 });
 
 var resizeOffset = 0;
-function ResizePlaylist() {
+function ResizeMain() {
 	if (resizeOffset == 0) {
 		resizeOffset += $("#playing").height();
 		resizeOffset += $("#nav").height();
 	}
 	var height = $(window).height() - resizeOffset;
-	$("#playlist").height(height);
+	$(".tab-main").height(height);
+	$("#loading").height(height);
 }
 
-function CheckLoading() {
-	$.get("/ajax/loading.aspx", function (data) {
-		if (data == "false") {
-			$("#loading").hide();
-			Startup();
-		} else {
-			$("#loading").show();
-			setTimeout(CheckWorking, 1000);
+function ShowLoading() {
+	$('#loading').show();
+}
+function HideLoading() {
+	$("#loading").hide();
+}
+
+function WaitForLoading() {
+	$.get("/ajax/loading.aspx", function (loading) {
+		if (loading == "true") {
+			setTimeout(WaitForLoading, 1000);
 		}
 	});
 }
 
-function Startup() {
-	RefreshPlaylist();
+function ShowTab(tab) {
+	$(".tab-main").css("z-index", "0");
+	if (tab == "artists") {
+		$("#artists-tab").css("z-index", "1");
+	} else {
+		$("#songs-tab").css("z-index", "1");
+	}
 }
 
-function RefreshPlaylist() {
-	$.getJSON("/ajax/songs.aspx", function (songs) {
-		$("#playlist").html(GetPlaylistHtml(songs));
+function LoadTab(tab, url, GetHtmlFunc) {
+	$.getJSON(url, function(json) {
+		$(tab).html(GetHtmlFunc(json));
 	}).error(function (obj, status) {
-		alert("Could not get files: " + status);
+		alert("Error getting tab: " + status);
 	});
 }
 
-function GetPlaylistHtml(songs) {
+function ShowArtists() {
+	ShowTab('artists');
+}
+
+function ShowSongs() {
+	ShowTab('songs');
+}
+
+function Play(id) {
+	$("#player").attr("src", "/play.aspx?id=" + id);
+	$("#player").attr("autoplay", "autoplay");
+}
+
+function GetArtistsHtml(artists) {
 	var items = [];
+	for (var i = 0; i < artists.length; i++) {
+		items.push('<a href="#" class="artist"><span class="name">'
+			+ artists[i].name + '</span></a>');
+	}
+	return items.join('\n');
+}
+
+function GetSongsHtml(songs) {
+	var items = [];
+	
 	for (var i = 0; i < songs.length; i++) {
-		items.push('<a href="#" class="file"><span class="path">'
+		items.push('<a href="javascript:void(0)" onclick="Play(\''
+			+ songs[i].id + '\')"  class="song"><span class="path">'
 			+ songs[i].path + '</span><span class="duration">'
-			+ songs[i].duration + '</span></div>');
+			+ songs[i].duration + '</span></a>');
 	}
 	return items.join('\n');
 }
