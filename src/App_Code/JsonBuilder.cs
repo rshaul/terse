@@ -8,7 +8,7 @@ namespace Terse.Json
 {
 	public interface IJsonToken
 	{
-		string ToJson();
+		string ToString();
 	}
 
 	public class JsonString : IJsonToken
@@ -18,8 +18,12 @@ namespace Terse.Json
 			this.s = s;
 		}
 
-		public string ToJson() {
-			return "\"" + s.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
+		public override string ToString() {
+			string output = s;
+			if (output != null) {
+				output = output.Replace("\\", "\\\\").Replace("\"", "\\\"");
+			}
+			return "\"" + output + "\"";
 		}
 	}
 
@@ -30,7 +34,7 @@ namespace Terse.Json
 			this.b = b;
 		}
 
-		public string ToJson() {
+		public override string ToString() {
 			return (b) ? "true" : "false";
 		}
 	}
@@ -48,7 +52,7 @@ namespace Terse.Json
 			s = n.ToString();
 		}
 
-		public string ToJson() {
+		public override string ToString() {
 			return s;
 		}
 	}
@@ -66,12 +70,12 @@ namespace Terse.Json
 			values.Add(value);
 		}
 
-		public string ToJson() {
+		public override string ToString() {
 			StringBuilder sb = new StringBuilder();
 			sb.Append("{\n");
 			for (int i=0; i < keys.Count; i++) {
 				string comma = (i == keys.Count-1) ? "" : ",";
-				sb.Append(keys[i].ToJson() + ":" + values[i].ToJson() + comma + "\n");
+				sb.Append(keys[i].ToString() + ":" + values[i].ToString() + comma + "\n");
 			}
 			sb.Append("}\n");
 			return sb.ToString();
@@ -86,13 +90,13 @@ namespace Terse.Json
 			list.Add(value);
 		}
 
-		public string ToJson() {
+		public override string ToString() {
 			StringBuilder sb = new StringBuilder();
 			sb.Append("[\n");
 
 			for (int i=0; i < list.Count; i++) {
 				string comma = (i == list.Count-1) ? "" : ",";
-				sb.Append(list[i].ToJson() + comma + "\n");
+				sb.Append(list[i].ToString() + comma + "\n");
 			}
 			sb.Append("]\n");
 			return sb.ToString();

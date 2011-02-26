@@ -25,7 +25,7 @@ namespace Terse
 			foreach (Artist artist in artists) {
 				if (artist.Name == song.Artist) {
 					if (artist.Art == null) {
-						artist.Art = song.GetArt();
+						//artist.Art = song.GetArt();
 					}
 				} else {
 					artists.Add(new Artist(song));

@@ -1,0 +1,1 @@
+﻿<%@ Page Language="C#" CodeFile="search_index.aspx.cs" Inherits="ajax_search_index" %>

@@ -9,12 +9,6 @@ using Terse.Json;
 
 public partial class ajax_artists : LibraryAjax
 {
-	JsonDictionary ArtistToJson(Artist artist) {
-		JsonDictionary dict = new JsonDictionary();
-		dict.Add("artist", artist.Name);
-		return dict;
-	}
-
 	string Clean(string n) {
 		string o = "";
 		foreach (char c in n) {
@@ -40,8 +34,8 @@ public partial class ajax_artists : LibraryAjax
 	protected override string LibraryResponse(Library library) {
 		JsonArray artists = new JsonArray();
 		foreach (Artist artist in library.GetArtists()) {
-			artists.Add(ArtistToJson(artist));
+			artists.Add(artist.ToJson());
 		}
-		return artists.ToJson();
+		return artists.ToString();
 	}
 }

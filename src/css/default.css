@@ -1,17 +1,32 @@
-﻿#loading span {
-	position: absolute;
-	display: block;
-	top: 50%;
-	left: 50%;
-	margin: -16px 0 0 -16px;
-	width: 32px;
-	height: 32px;
-	z-index: 9;
+﻿/*
+	PLAYER
+*/
+
+#player-container {
+	width: 96%;
+	padding: 13px 2%;
 }
 
-#playing {
-	height: 100px;
+#player-text {
+	height: 20px;
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
 }
+#player-text #artist:after {
+	content:" - ";
+}
+#player-text #album:after {
+	content:" - ";
+}
+
+#player {
+	width: 100%;
+}
+
+/*
+	NAV
+*/
 
 #nav {
 	position: relative;
@@ -19,17 +34,18 @@
 	height: 30px;
 	line-height: 30px;
 }
-#categories li {
+#tab-links li {
 	float: left;
 }
-#categories a {
+
+.tab-link {
 	padding: 0 20px;
 	display: block;
 	font-weight: bold;
 	color: #FFF;
 	text-decoration: none;
 }
-#categories a:hover {
+.tab-link:hover, #tab-links .selected {
 	background: #333;
 }
 #categories:after {
@@ -49,33 +65,64 @@
 	width: 200px;
 }
 
-#loading, .tab-main {
-	position: absolute;
-	background: #333;
+/*
+	TABS
+*/
+
+#tabs {
+	position: relative;
 	width: 100%;
-	overflow: scroll;
-	top: 130px;
-	height: 90%;
+	height: 70%;
+	background: #333;
 }
 
-.song {
-	position: relative;
+#loading span {
+	position: absolute;
 	display: block;
+	top: 50%;
+	left: 50%;
+	margin: -16px 0 0 -16px;
+	width: 32px;
+	height: 32px;
+}
+
+#loading, .tab-main {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background: #333;
+}
+
+/*
+	SONG TAB
+*/
+
+.song {
 	color: #FFF;
-	text-decoration: none;
-	white-space: nowrap;
+	cursor: pointer;
+	padding: 0 3px;
 }
 
 .song:hover {
 	background: #555;
 }
 
-.song .path {
-	padding: 0 5px;
+.playing {
+	color: #99F;
 }
 
-.song .duration {
-	position: absolute;
-	right: 0;
-	padding: 0 5px;
+.artist, .album, .title {
+	display: inline-block;
+	width: 25%;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.title {
+	width: 40%;
+}
+
+.duration {
+	float: right;
 }

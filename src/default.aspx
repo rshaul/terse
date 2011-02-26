@@ -4,28 +4,32 @@
 </asp:Content>
 <asp:Content ID="body" ContentPlaceHolderID="body" Runat="Server">
 
-	<div id="playing">
-		Next Previous Start Stop
-		<audio id="player" controls="controls"></audio>
+	<div id="player-container">
+		<div id="player-text"></div>
+		<audio id="player" controls="controls" autoplay="autoplay"></audio>
 	</div>
 
 	<div id="nav">
-		<ul id="categories">
-			<li><a id="artists-link" href="#artists">Artist</a></li>
-			<li><a id="songs-link" href="#songs">Song</a></li>
+		<ul id="tab-links">
+			<li><a id="artists-link" class="tab-link" href="#artists">Artist</a></li>
+			<li><a id="songs-link" class="tab-link" href="#songs">Song</a></li>
+			<li><a id="search-link" class="tab-link" href="#search">Search</a></li>
 		</ul>
 
 		<div id="search">
 			<input type="text" id="query" />
 		</div>
 	</div>
-	
-	<div id="loading">
-		<span><img src="/images/loading.gif" /></span>
+
+	<div id="tabs">
+		<div id="loading">
+			<span><img src="/images/loading.gif" /></span>
+		</div>
+		<div class="tab-main" id="artists-tab"></div>
+		<div class="tab-main" id="songs-tab"></div>
+		<div class="tab-main" id="search-tab"></div>
 	</div>
 
-	<div class="tab-main" id="artists-tab"></div>
-	<div class="tab-main" id="songs-tab"></div>
-
+	<script src="/js/jquery.template.js" type="text/javascript"></script>
 	<script src="/js/default.js" type="text/javascript"></script>
 </asp:Content>
