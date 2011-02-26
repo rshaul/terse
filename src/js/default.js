@@ -1,5 +1,8 @@
 ﻿$(function () {
-	WaitForBackend();
+	WaitForLibrary(function () {
+		LoadTab("artists", "/ajax/artists.aspx", SetArtistsHtml);
+		LoadTab("songs", "/ajax/songs.aspx", SetSongsHtml);
+	});
 
 	ResizeTabs();
 	$(window).resize(ResizeTabs);
@@ -25,11 +28,6 @@
 
 	$("#query").keydown(RunSearch);
 });
-
-function Startup() {
-	LoadTab("artists", "/ajax/artists.aspx", SetArtistsHtml);
-	LoadTab("songs", "/ajax/songs.aspx", SetSongsHtml);
-}
 
 function GetJson(url, callback) {
 	$.getJSON(url, callback).error(function (obj, status) {
@@ -77,13 +75,13 @@ function HideLoading() {
 	$("#loading").hide();
 }
 
-function WaitForBackend() {
+function WaitForLibrary(callback) {
 	ShowLoading();
 	GetJson("/ajax/loading.aspx", function (loading) {
 		if (loading) {
-			setTimeout(WaitForBackend, 1000);
+			setTimeout(WaitForLibrary, 1000);
 		} else {
-			Startup();
+			callback();
 			HideLoading();
 		}
 	});
@@ -104,12 +102,10 @@ function ShowTab(tab) {
 }
 
 function LoadTab(tab, url, SetHtmlFunc) {
-	ShowLoading();
 	GetJson(url, function (json) {
 		var element = $("#" + tab + "-tab");
 		element.html("");
 		SetHtmlFunc(json, element);
-		HideLoading();
 	});
 }
 
