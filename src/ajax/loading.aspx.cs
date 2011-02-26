@@ -8,10 +8,10 @@ using Terse;
 
 public partial class ajax_loading : LibraryAjax
 {
-	protected override string LibraryResponse(Library collection) {
-		return "false";
+	protected override IJsonToken LibraryResponse(Library collection) {
+		return new JsonBool(false);
 	}
-	protected override string LibraryIsLoadingResponse() {
-		return "true";
+	protected override IJsonToken LibraryIsLoadingResponse() {
+		return new JsonBool(true);
 	}
 }

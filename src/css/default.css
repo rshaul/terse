@@ -44,6 +44,7 @@
 	font-weight: bold;
 	color: #FFF;
 	text-decoration: none;
+	cursor: pointer;
 }
 .tab-link:hover, #tab-links .selected {
 	background: #333;
@@ -74,9 +75,10 @@
 	width: 100%;
 	height: 70%;
 	background: #333;
+	color: #FFF;
 }
 
-#loading span {
+#loading-tab span {
 	position: absolute;
 	display: block;
 	top: 50%;
@@ -86,26 +88,28 @@
 	height: 32px;
 }
 
-#loading, .tab-main {
+.tab-main {
 	position: absolute;
-	width: 100%;
+	width: 98%;
+	padding: 0 1%;
 	height: 100%;
 	overflow: auto;
 	background: #333;
+	color: #FFF;
+	z-index: 0;
+}
+
+#tabs .selected {
+	z-index: 1;
 }
 
 /*
 	SONG TAB
 */
 
-.song {
-	color: #FFF;
-	cursor: pointer;
-	padding: 0 3px;
-}
-
 .song:hover {
 	background: #555;
+	cursor: pointer;
 }
 
 .playing {
@@ -125,4 +129,24 @@
 
 .duration {
 	float: right;
+}
+
+/*
+	FOOTER
+*/
+
+#footer {
+	position: absolute;
+	bottom: 0;
+	z-index: 2;
+	width: 98%;
+	border-top: 1px solid black;
+	background: #333;
+	color: #FFF;
+	padding: 3px 1%;
+}
+
+#log-link:hover {
+	cursor: pointer;
+	color: #AAA;
 }

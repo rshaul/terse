@@ -58,9 +58,11 @@ namespace Terse
 				try {
 					TagLib.File file = TagLib.File.Create(info.FullName);
 					songs.Add(new Song(file));
-				} catch (TagLib.UnsupportedFormatException) {
+				} catch (TagLib.UnsupportedFormatException ex) {
+					Log.AddInfo("Unsupported file: " + ex.Message);
 					// Expected sometimes, since we are pulling all files
-				} catch (TagLib.CorruptFileException) {
+				} catch (TagLib.CorruptFileException ex) {
+					Log.AddWarning("Corrupt file: " + ex.Message);
 					// TODO: Let user know somewhere
 				}
 			}

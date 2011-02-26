@@ -11,10 +11,15 @@ namespace Terse
 			base.OnLoad(e);
 		
 			Response.Clear();
-			Response.Write(AjaxResponse());
+
+			IJsonToken response = AjaxResponse();
+			if (response != null) {
+				Response.Write(response.ToString());
+			}
+
 			Response.End();
 		}
 
-		protected abstract string AjaxResponse();
+		protected abstract IJsonToken AjaxResponse();
 	}
 }

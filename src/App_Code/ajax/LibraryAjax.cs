@@ -7,7 +7,7 @@ namespace Terse
 {
 	public abstract class LibraryAjax : BaseAjax
 	{
-		protected override string AjaxResponse() {
+		protected override IJsonToken AjaxResponse() {
 			Library library;
 			if (LibraryManager.TryGetLibrary(out library)) {
 				return LibraryResponse(library);
@@ -16,9 +16,9 @@ namespace Terse
 			}
 		}
 
-		protected abstract string LibraryResponse(Library library);
+		protected abstract IJsonToken LibraryResponse(Library library);
 	
-		protected virtual string LibraryIsLoadingResponse() {
+		protected virtual IJsonToken LibraryIsLoadingResponse() {
 			return null;
 		}
 	}

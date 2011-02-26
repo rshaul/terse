@@ -4,7 +4,7 @@
 	ResizeTabs();
 	$(window).resize(ResizeTabs);
 
-	ShowTab(window.location.hash.substring(1)); // Remove #
+	ShowTab('songs');
 
 	$("#artists-link").click(function () {
 		ShowTab('artists');
@@ -15,11 +15,31 @@
 	$("#search-link").click(function () {
 		ShowTab('search');
 	});
+	$("#log-link").click(function () {
+		ShowTab('log');
+	});
+
+	LoadTab('log', '/ajax/log.aspx', SetLogHtml);
 
 	$("#player").bind('ended', PlayNext);
 
 	$("#query").keydown(RunSearch);
 });
+
+function Startup() {
+	LoadTab("artists", "/ajax/artists.aspx", SetArtistsHtml);
+	LoadTab("songs", "/ajax/songs.aspx", SetSongsHtml);
+}
+
+function GetJson(url, callback) {
+	$.getJSON(url, callback).error(function (obj, status) {
+		alert("Error contacting server: " + status);
+	});
+}
+
+/*
+	SEARCH
+*/
 
 var searchCounter = 0;
 function RunSearch(obj) {
@@ -36,16 +56,20 @@ function RunSearchDelayed(obj, localCounter) {
 	}
 }
 
-var resizeOffset = 0;
+/*
+	RESIZE
+*/
 function ResizeTabs() {
-	if (resizeOffset == 0) {
-		resizeOffset += $("#player-container").outerHeight(true);
-		resizeOffset += $("#nav").outerHeight(true);
-	}
+	var resizeOffset = 0;
+	resizeOffset += $("#header").outerHeight(true);
+	resizeOffset += $("#footer").outerHeight(true);
 	var height = $(window).height() - resizeOffset;
 	$("#tabs").height(height);
 }
 
+/*
+	LOADING
+*/
 function ShowLoading() {
 	$('#loading').show();
 }
@@ -55,8 +79,8 @@ function HideLoading() {
 
 function WaitForBackend() {
 	ShowLoading();
-	$.get("/ajax/loading.aspx", function (loading) {
-		if (loading == "true") {
+	GetJson("/ajax/loading.aspx", function (loading) {
+		if (loading) {
 			setTimeout(WaitForBackend, 1000);
 		} else {
 			Startup();
@@ -65,30 +89,73 @@ function WaitForBackend() {
 	});
 }
 
-function Startup() {
-	LoadTab("artists", "/ajax/artists.aspx", SetArtistsHtml);
-	LoadTab("songs", "/ajax/songs.aspx", SetSongsHtml);
-}
+/*
+	TABS
+*/
 
 var currentTab;
 function ShowTab(tab) {
-	$(".tab-main").css("z-index", "0");
+	$(".tab-main").removeClass('selected');
 	$(".tab-link").removeClass('selected');
 	if (!tab) tab = "songs";
-	$("#" + tab + "-tab").css("z-index", "1");
+	$("#" + tab + "-tab").addClass('selected');
 	$("#" + tab + "-link").addClass('selected');
 	currentTab = tab;
 }
 
 function LoadTab(tab, url, SetHtmlFunc) {
-	$.getJSON(url, function (json) {
+	ShowLoading();
+	GetJson(url, function (json) {
 		var element = $("#" + tab + "-tab");
 		element.html("");
 		SetHtmlFunc(json, element);
-	}).error(function (obj, status) {
-		alert("Error getting tab: " + status);
+		HideLoading();
 	});
 }
+
+function SetArtistsHtml(artists, element) {
+	var items = [];
+	for (var i = 0; i < artists.length; i++) {
+		items.push('<a href="#" class="artist"><span class="name">'
+			+ artists[i].name + '</span></a>');
+	}
+	return items.join('\n');
+}
+
+function SetLogHtml(items, element) {
+	var t = $.template(
+			'<div class="log-item">${message}</div>');
+
+	for (var i = 0; i < items.length; i++) {
+		element.append(t, items[i]);
+	}
+}
+
+function SetSongsHtml(songs, element) {
+	var pathTemplate = $.template(
+		'<div class="song" data-id="${id}" onclick="Play(\'${id}\')">'
+		+ '<span class="path">${path}</span>'
+		+ '<span class="duration">${duration}</span></div>');
+
+	var titleTemplate = $.template(
+		'<div class="song" data-id="${id}" onclick="Play(\'${id}\')">'
+		+ '<span class="artist">${artist}</span>'
+		+ '<span class="album">${album}</span>'
+		+ '<span class="title">${title}</span>'
+		+ '<span class="duration">${duration}</span></div>');
+
+	for (var i = 0; i < songs.length; i++) {
+		if (songs[i].title) {
+			element.append(titleTemplate, songs[i]);
+		} else {
+			element.append(pathTemplate, songs[i]);
+		}
+	}
+}
+
+/*
+	PLAYING
+*/
 
 function Play(id) {
 	PlayOnTab(currentTab, id);
@@ -109,7 +176,7 @@ function PlayNext() {
 }
 
 function GetSongInfo(id) {
-	$.getJSON("/ajax/song.aspx?id=" + id, SetPlayerText);
+	GetJson("/ajax/song.aspx?id=" + id, SetPlayerText);
 }
 
 function SetPlayerText(song) {
@@ -145,35 +212,4 @@ function SetTitle(song) {
 
 	if (!originalTitle) originalTitle = document.title;
 	document.title = text + " " + originalTitle;
-}
-
-function SetArtistsHtml(artists, element) {
-	var items = [];
-	for (var i = 0; i < artists.length; i++) {
-		items.push('<a href="#" class="artist"><span class="name">'
-			+ artists[i].name + '</span></a>');
-	}
-	return items.join('\n');
-}
-
-function SetSongsHtml(songs, element) {
-	var pathTemplate = $.template(
-		'<div class="song" data-id="${id}" onclick="Play(\'${id}\')">'
-		+ '<span class="path">${path}</span>'
-		+ '<span class="duration">${duration}</span></div>');
-
-	var titleTemplate = $.template(
-		'<div class="song" data-id="${id}" onclick="Play(\'${id}\')">'
-		+ '<span class="artist">${artist}</span>'
-		+ '<span class="album">${album}</span>'
-		+ '<span class="title">${title}</span>'
-		+ '<span class="duration">${duration}</span></div>');
-
-	for (var i = 0; i < songs.length; i++) {
-		if (songs[i].title) {
-			element.append(titleTemplate, songs[i]);
-		} else {
-			element.append(pathTemplate, songs[i]);
-		}
-	}
 }

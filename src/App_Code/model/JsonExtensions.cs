@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using Terse.Json;
 
 namespace Terse
 {
@@ -26,6 +25,14 @@ namespace Terse
 		public static JsonDictionary ToJson(this Artist artist) {
 			JsonDictionary dict = new JsonDictionary();
 			dict.Add("artist", artist.Name);
+			return dict;
+		}
+
+		public static JsonDictionary ToJson(this Log.Item item) {
+			JsonDictionary dict = new JsonDictionary();
+			dict.Add("message", item.Message);
+			dict.Add("type", item.Type.ToString());
+			dict.Add("time", item.Time.ToString());
 			return dict;
 		}
 	}

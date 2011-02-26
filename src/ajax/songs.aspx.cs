@@ -6,7 +6,6 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Text;
 using Terse;
-using Terse.Json;
 
 public partial class ajax_songs : LibraryAjax
 {
@@ -82,11 +81,11 @@ public partial class ajax_songs : LibraryAjax
 		}
 	}
 
-	protected override string LibraryResponse(Library library) {
+	protected override IJsonToken LibraryResponse(Library library) {
 		JsonArray array = new JsonArray();
 		foreach (Song song in GetSongs(library)) {
 			array.Add(song.ToJson());
 		}
-		return array.ToString();
+		return array;
 	}
 }
