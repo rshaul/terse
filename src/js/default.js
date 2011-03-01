@@ -1,13 +1,13 @@
 ﻿$(function () {
+	ShowTab('loading');
 	WaitForLibrary(function () {
-		LoadTab("artists", "/ajax/artists.aspx", SetArtistsHtml);
-		LoadTab("songs", "/ajax/songs.aspx", SetSongsHtml);
+		LoadTab('artists', '/ajax/artists.aspx', SetArtistsHtml);
+		LoadTab('songs', '/ajax/songs.aspx', SetSongsHtml);
+		ShowTab('songs');
 	});
 
 	ResizeTabs();
 	$(window).resize(ResizeTabs);
-
-	ShowTab('songs');
 
 	$("#artists-link").click(function () {
 		ShowTab('artists');
@@ -68,21 +68,12 @@ function ResizeTabs() {
 /*
 	LOADING
 */
-function ShowLoading() {
-	$('#loading').show();
-}
-function HideLoading() {
-	$("#loading").hide();
-}
-
 function WaitForLibrary(callback) {
-	ShowLoading();
 	GetJson("/ajax/loading.aspx", function (loading) {
 		if (loading) {
-			setTimeout(WaitForLibrary, 1000);
+			setTimeout(WaitForLibrary, 1000, callback);
 		} else {
 			callback();
-			HideLoading();
 		}
 	});
 }
